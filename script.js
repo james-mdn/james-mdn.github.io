@@ -56,19 +56,15 @@ function initGameOfLife() {
                 }
             });
 
-            // Adjust for negative coordinates after rotation to keep pattern within bounds
-            // Find min x and y to shift the pattern
-            let minX = Math.min(...rotatedGlider.map(p => p[0]));
-            let minY = Math.min(...rotatedGlider.map(p => p[1]));
-            rotatedGlider = rotatedGlider.map(([x, y]) => [x - minX, y - minY]);
 
 
             rotatedGlider.forEach(([dx, dy]) => {
                 const x = startX + dx;
                 const y = startY + dy;
-                if (x >= 0 && x < cols && y >= 0 && y < rows) {
-                    grid[x][y] = 1;
-                }
+                // Apply toroidal boundaries for initial glider placement
+                const wrappedX = (x % cols + cols) % cols;
+                const wrappedY = (y % rows + rows) % rows;
+                grid[wrappedX][wrappedY] = 1;
             });
         }
 
@@ -76,8 +72,10 @@ function initGameOfLife() {
         const numberOfGliders = Math.floor(Math.random() * 7) + 6; // 6 to 13 gliders
 
         for (let k = 0; k < numberOfGliders; k++) {
-            const randomCol = Math.floor(Math.random() * (cols - 3)); // -3 to ensure glider fits
-            const randomRow = Math.floor(Math.random() * (rows - 3)); // -3 to ensure glider fits
+            // Allow gliders to be placed anywhere, relying on toroidal boundaries for wrapping
+            // Place gliders closer to edges for easier observation of wrapping
+            const randomCol = Math.floor(Math.random() * (cols * 0.8)) + Math.floor(cols * 0.1);
+            const randomRow = Math.floor(Math.random() * (rows * 0.8)) + Math.floor(rows * 0.1);
             const randomRotation = Math.floor(Math.random() * 4); // 0, 1, 2, or 3 for 0, 90, 180, 270 degrees
             placeGlider(randomCol, randomRow, randomRotation);
         }
@@ -113,12 +111,11 @@ function initGameOfLife() {
                     for (let yOffset = -1; yOffset <= 1; yOffset++) {
                         if (xOffset === 0 && yOffset === 0) continue;
 
-                        const neighborCol = i + xOffset;
-                        const neighborRow = j + yOffset;
+                        // Implement toroidal boundaries using modulo operator
+                        const neighborCol = (i + xOffset + cols) % cols;
+                        const neighborRow = (j + yOffset + rows) % rows;
 
-                        if (neighborCol >= 0 && neighborCol < cols && neighborRow >= 0 && neighborRow < rows) {
-                            liveNeighbors += grid[neighborCol][neighborRow];
-                        }
+                        liveNeighbors += grid[neighborCol][neighborRow];
                     }
                 }
 
@@ -134,7 +131,7 @@ function initGameOfLife() {
         return nextGrid;
     }
 
-    const gameSpeed = 200; // Milliseconds between generations (adjust as needed for slower speed)
+    const gameSpeed = 200; // Milliseconds between generations
 
     function animate() {
         grid = getNextGeneration();
@@ -230,9 +227,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
                 const newMainContent = doc.querySelector('main').innerHTML;
+                const newTitle = doc.querySelector('title') ? doc.querySelector('title').textContent : document.title;
 
                 // Update only the main content area of the current page
                 mainContent.innerHTML = newMainContent;
+                document.title = newTitle; // Update the page title
 
                 // Update browser history to reflect the new URL without a full reload
                 history.pushState({ path: targetPage }, '', targetPage);
