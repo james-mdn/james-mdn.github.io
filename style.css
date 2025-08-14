@@ -1,0 +1,222 @@
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #0056b3;
+    --text-color: #333;
+    --light-text-color: #666;
+    --background-color: #f4f4f4;
+    --white-color: #fff;
+    --dark-background-color: #333;
+    --border-color: #eee;
+    --subtle-border-color: #555;
+    --grid-line-color: #ccc;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --loading-bg-color: rgba(0, 0, 0, 0.7);
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    position: relative; /* Needed for canvas positioning */
+    min-height: 100vh; /* Ensure body takes full viewport height */
+    box-sizing: border-box; /* Ensure consistent box model */
+    padding-bottom: 80px; /* Add padding to account for fixed footer height */
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Send canvas to background */
+    opacity: 0.5; /* Make it a little more opaque */
+}
+
+header {
+    background-color: var(--dark-background-color);
+    color: var(--white-color);
+    padding: 1em 20px; /* Add horizontal padding */
+    text-align: center;
+    position: relative;
+    z-index: auto; /* Allow default stacking context */
+    border-bottom: 1px solid var(--subtle-border-color); /* Add a subtle bottom border */
+    padding-bottom: 1.5em; /* Increase bottom padding */
+
+    display: flex; /* Use flexbox for layout */
+    justify-content: space-between; /* Space out items */
+    align-items: center; /* Vertically align items */
+}
+
+header h1 {
+    margin: 0; /* Remove default margin */
+    flex-grow: 1; /* Allow h1 to grow and push other items */
+    text-align: left; /* Align title to the left */
+}
+
+/* Hamburger menu toggle button */
+.menu-toggle {
+    display: none; /* Hidden by default on larger screens */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    /* Remove absolute positioning, let flexbox handle it */
+    position: static;
+    right: auto;
+    top: auto;
+    transform: none;
+    z-index: 2; /* Ensure it's above other header content */
+}
+
+.hamburger {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: var(--white-color);
+    margin: 5px auto;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Navigation list styles */
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    transition: all 0.3s ease-in-out;
+}
+
+nav ul li {
+    margin: 0 15px;
+}
+
+nav ul li a {
+    color: var(--white-color);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* Mobile specific styles for navigation */
+@media (max-width: 600px) {
+    header {
+        flex-wrap: wrap; /* Allow items to wrap to next line */
+        justify-content: center; /* Center items when wrapped */
+        padding-bottom: 1em; /* Adjust padding for mobile header */
+    }
+
+    header h1 {
+        text-align: center; /* Center title on mobile */
+        flex-grow: 0; /* Don't let title grow on mobile */
+        width: 100%; /* Take full width */
+    }
+
+    .menu-toggle {
+        display: block; /* Show hamburger on mobile */
+        position: absolute; /* Position relative to header */
+        right: 20px;
+        top: 1em; /* Adjust top position */
+        transform: none; /* Remove transform */
+    }
+
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+        display: none; /* Hide navigation by default on mobile */
+        width: 100%;
+        background-color: var(--dark-background-color); /* Same as header background */
+        position: static; /* Change to static position for push-down effect */
+        padding: 10px 0;
+        z-index: 9999; /* Ensure navigation is definitively above all other content */
+    }
+
+    nav ul.show {
+        display: flex; /* Show navigation when 'show' class is active */
+    }
+
+    nav ul li {
+        margin: 10px 0;
+    }
+}
+
+main {
+    padding: 20px;
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: var(--white-color);
+    box-shadow: 0 0 10px var(--shadow-color);
+    position: relative;
+    z-index: auto; /* Allow default stacking context */
+}
+
+@media (max-width: 600px) {
+    main {
+        margin: 10px;
+        padding: 15px;
+    }
+}
+
+.blog-posts .post {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.blog-posts .post:last-child {
+    border-bottom: none;
+}
+
+.post h2 {
+    color: var(--secondary-color);
+}
+
+.post-meta {
+    font-size: 0.9em;
+    color: var(--light-text-color);
+    margin-bottom: 10px;
+}
+
+.read-more {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    padding: 8px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.read-more:hover {
+    background-color: var(--secondary-color);
+}
+
+/* Loading Indicator Styles */
+.loading-indicator {
+    display: none; /* Hidden by default */
+    position: fixed;
+    bottom: 80px; /* Above the footer */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--loading-bg-color);
+    color: var(--white-color);
+    padding: 10px 20px;
+    border-radius: 5px;
+    z-index: 1000; /* Ensure it's on top */
+    font-size: 0.9em;
+}
+
+.loading-indicator.show {
+    display: block;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    background-color: var(--dark-background-color);
+    color: var(--white-color);
+    position: fixed; /* Re-add fixed position */
+    bottom: 0; /* Dock to the bottom */
+    width: 100%; /* Ensure it spans the full width */
+    z-index: 1; /* Ensure footer is above canvas */
+}
